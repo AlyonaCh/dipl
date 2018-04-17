@@ -14,7 +14,7 @@ if($_SESSION['userid']==NULL){
   </head>
   <body>
   <a href="logaut.php">Выход</a>
-  <h3>Управление администраторами</h3>
+  <h2>Управление администраторами</h2>
   <form method="GET">
       <input type="text" name="newadmnam">
       <input type="text" name="newadmpas">
@@ -47,30 +47,43 @@ if($_SESSION['userid']==NULL){
   </tr>
   <?php endforeach ?>
   </table>
-  <h3>Управление темами</h3>
+  <h2>Управление темами</h2>
     <form method="GET" >
         <input type="text" name="newcatecory">
         <input type="submit" name="addad" value="Добавить новую тему">
     </form>
+    <h3>Список тем</h3>
     <table border="1">
      <tr>
        <th>Название темы</th>
-       <th>Количество вопросов</th>
-       <th>Количество опубликованных</th>
-       <th colspan="2">Количество не отвеченных</th>
-       <th colspan="6">Действия</th>
+       <th>Удалить категорию и все вопросы в ней</th>
      </tr>
-     <?php $i=0; foreach ($qwes as $qwe) :  ?>
+     <?php $i=0; foreach ($categorys as $categor) :  ?>
      <tr>
-       <td><?= $categco['name'][$i]['catego'];?></td>
-       <td><?=$categco['q'][$i]['count(quest)']; ?></td>
-       <td><?=$categco['s'][$i]['count(status)']; ?></td>
-       <td colspan="2"><?=$categco['a'][$i]['count(quest)']; ?></td>
-       <td colspan="6">
-       <form method="GET"  enctype="multipart/form-data">
-              <input type="hidden" name="catid" value="<?= $categco['name'][$i]['idcat']; ?>">
-              <input type="submit" name ="godelcate" Value="Удалить"><?php $i++;?>
-       </form>
+       <td><?=$categor['catego']; ?></td>
+       <td>
+         <form method="GET"  enctype="multipart/form-data">
+            <input type="hidden" name="catid" value="<?= $categor['id']; ?>">
+            <input type="submit" name ="godelcate" Value="Удалить"><?php $i++;?>
+        </form>
+      </td>
+    </tr>
+     <?php endforeach ?>
+   </table>
+   <h3>Содержание тем</h3>
+    <table border="1">
+     <?php $i=0; foreach ($qwes as $qwev) :  ?>
+     <tr>
+       <th colspan="3">Название темы</th>
+       <th colspan="3">Количество вопросов</th>
+       <th colspan="3">Количество опубликованных</th>
+       <th colspan="2">Количество не отвеченных</th>
+     </tr>
+     <tr>
+       <td colspan="3"><?= $categco['name'][$i]['catego'];?></td>
+       <td colspan="3"><?=$categco['q'][$i]['count(quest)']; ?></td>
+       <td colspan="3"><?=$categco['s'][$i]['count(status)']; ?></td>
+       <td colspan="2"><?=$categco['a'][$i]['count(quest)']; $i++?></td>
        </td>
      </tr>
      <tr>
@@ -89,13 +102,13 @@ if($_SESSION['userid']==NULL){
        <th>Ответить</th>
        <th>Изменить автора</th>
      </tr>
-       <?php foreach ($qwe as $qw) :  ?>
+       <?php foreach ($qwev as $qw) : ?>
      <tr>
        <td><?= $qw['quest']?></td>
        <td><?= $qw['answer']?></td>
        <td><?= $qw['date']?></td>
        <td><?= $qw['status']?></td>
-       <td><?= $qw['name_user']?></td>
+       <td><?= $qw['name']?></td>
        <form method="GET"  enctype="multipart/form-data">
              <td>
                <input type="hidden" name="qwid" value="<?= $qw['id']; ?>">
@@ -118,11 +131,52 @@ if($_SESSION['userid']==NULL){
              <td>
                <input type="hidden" name="id_user" value="<?= $qw['id_user']; ?>">
                <input type="text" name="newavt">
-               <input type="submit" name ="zamavt" Value="Изменить"></td>
+               <input type="submit" name ="zamavt" Value="Изменить">
+             </td>
+             <td>
+               <input type="hidden" name="qwesid" value="<?= $qw[0]; ?>">
+               <select name="categori"><?php foreach ($selec as $sel) : ?>
+                 <option><?= $sel['catego'];?></option><?php endforeach ?>
+               <select>
+               <input type="submit" name ="zamacat" Value="Переместить">
+             </td>
         </form>
      </tr>
-      <?php endforeach ?>
-    <?php endforeach ?>
+     <?php  endforeach ?>
+    <?php endforeach  ?>
     </table>
+      <h3>Список не отвеченных вопросов</h3>
+      <table border="1">
+       <tr>
+         <th>Вопрос</th>
+         <th>Дата добавления</th>
+         <th>Ответить</th>
+         <th>Изменить вопрос</th>
+       </tr>
+       <?php if(!empty($allans)){foreach ($allans as $all) :  ?>
+       <tr>
+         <td><?=$all['quest']; ?></td>
+         <td><?=$all['date']; ?></td>
+         <td>
+           <form method="GET"  enctype="multipart/form-data">
+               <select name="status">
+                 <option>Скрыть</option>
+                 <option>Опубликовать</option>
+               <select>
+               <input type="hidden" name="allid" value="<?= $all['id']; ?>">
+               <input type="text" name="newansw">
+               <input type="submit" name ="answ" Value="Ответить">
+          </form>
+        </td>
+        <td>
+          <form method="GET"  enctype="multipart/form-data">
+            <input type="hidden" name="qwid" value="<?= $all['id']; ?>">
+            <input type="text" name="newqw">
+            <input type="submit" name ="zamqw" Value="Изменить">
+          </form>
+        </td>
+      </tr>
+    <?php endforeach ;} ?>
+     </table>
   </body>
 </html>

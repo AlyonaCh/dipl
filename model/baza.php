@@ -1,24 +1,23 @@
 <?php
-include ('../connect.php');
-session_start();
+//session_start();
 class Baza {
     public $db = null;
     function __construct($db)
     {
 		    $this->db = $db;
     }
-    public $res=[];
+    /*public $res=[];
     public $resu=[];
     public $us=[];
-    public $ad=[];
+    public $ad=[];*/
     public function findAll()
     {
-        $sth =$this->db->prepare("SELECT * FROM question inner JOIN category  on question.id_cat=category.id where status=1");
+        $sth =$this->db->prepare("SELECT * FROM question inner JOIN category  on question.id_cat=category.id where status=1  and question.answer!=''");
         if ($sth->execute()) {
 			      while($row=$sth->fetch()){
-                $resu[]=$row;
+                $resul[]=$row;
             }
-        return $resu;
+        return $resul;
 		    }
 
     }
@@ -148,7 +147,6 @@ class Baza {
                         $cola[]=$row2;
                     }
                     $sth2 =$this->db->prepare("SELECT * FROM question inner JOIN category  on question.id_cat=category.id where question.id_cat=? ");
-
                     if ($sth2->execute(array($cid))) {
             			      while($row=$sth2->fetch()){
                             $qwe[]=$row;
@@ -157,8 +155,6 @@ class Baza {
                 }
             }
             $h=array('q'=>$colq,'s'=>$cols,'a'=>$cola,'qwe'=>$qwe,'name'=>$nam);
-            //echo'<pre>';
-            //print_r($h);
             return $h;
     }
     public function delCat()
@@ -174,25 +170,17 @@ class Baza {
         $catid=$this->getCateg();
         foreach ($catid as $cidi){
             $idgw=$cidi['id'];
-            $sth2 =$this->db->prepare("SELECT * FROM question  where id_cat=? ");
+            $sth2 =$this->db->prepare("SELECT * FROM question inner JOIN users  on question.id_user=users.id where id_cat=? ");
             if ($sth2->execute(array($idgw))) {
 			          while($row=$sth2->fetch()){
-                    $user=$this->getUser();
-                    foreach ($user as $us){
-                        if($us['id']==$row['id_user']){
-                            $row['name_user']=$us['name'];
-                        }
+                    if($row['status']==1){
+                        $row['status']='Опубликован';
+                    }else if($row['status']==2){
+                        $row['status']='Ожидает ответа';
+                    }else{
+                        $row['status']='Скрыт';
                     }
-                    if($cidi['id']=$row['id_cat']){
-                        if($row['status']==1){
-                            $row['status']='Опубликован';
-                        }else if($row['status']==2){
-                            $row['status']='Ожидает ответа';
-                        }else{
-                            $row['status']='Скрыт';
-                        }
-                        $qwe[$cidi['catego']][]=$row;
-                    }
+                    $qwe[$cidi['catego']][]=$row;
                 }
             }
         }
@@ -257,6 +245,48 @@ class Baza {
             }
         }
     }
+    public function zamCat()
+    {
+        $catid=$this->selectCategory();
+        foreach ($catid as $cid){
+            if($_GET['categori']==$cid['catego']){
+                $catid=$cid['id'];
+            }
+        }
+        $qwidd=$_GET['qwesid'];
+        $sth2 =$this->db->prepare("update question set id_cat=:id_cat where id=:id");
+        $sth2->bindParam(':id_cat',$catid);
+        $sth2->bindParam(':id',$qwidd);
+        $sth2->execute();
+    }
+    public function findAllAns()
+    {
+        $sth =$this->db->prepare("SELECT * FROM question  where answer='' ORDER BY date");
+        if ($sth->execute()) {
+			      while($row=$sth->fetch()){
+                $resul[]=$row;
+            }
+            if (!empty($resul)) {
+                return $resul;
+            }
+		    }
+
+    }
+    public function newAnsw()
+    {
+        if ($_GET['status']=='Скрыть') {
+            $status=1;
+        }else{
+            $status=3;
+        }
+        $qwidd=$_GET['allid'];
+        $answer=$_GET['newansw'];
+        $sth2 =$this->db->prepare("update question set answer=:answer, status=:status where id=:qid");
+        $sth2->bindParam(':qid',$qwidd);
+        $sth2->bindParam(':status',$status);
+        $sth2->bindParam(':answer',$answer);
+        $sth2->execute();
+    }
 }
 $question = new Baza($db);
 $questions=$question->findAll();
@@ -273,7 +303,7 @@ if(isset($_GET['gonewpas'])){
     header("Location:adm.php");
 }
 if(isset($_GET['godeladm'])){
-    $deladm=$question->delCat();
+    $deladm=$question->delAdm();
     header("Location:adm.php");
 }
 $catego=$question->getCateg();
@@ -318,7 +348,6 @@ if(isset($_GET['newadm'])){
     $zam=$question->newAdm();
     header("Location:adm.php");
 }
-session_start();
 if (!empty($_POST)){
     if(isset($_POST['vhod'])){
         $zam=$question->Vhod();
@@ -328,5 +357,14 @@ if (!empty($_POST)){
         }
     }
 }
-
+$categorys=$question->selectCategory();
+if(isset($_GET['zamacat'])){
+    $zamc=$question->zamCat();
+    header("Location:adm.php");
+}
+$allans=$question->findAllAns();
+if(isset($_GET['answ'])){
+    $zamc=$question->newAnsw();
+    header("Location:adm.php");
+}
 ?>
