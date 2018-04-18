@@ -289,14 +289,14 @@ class Baza {
     }
 }
 $question = new Baza($db);
-$questions=$question->findAll();
+//$questions=$question->findAll();
 $selec=$question->selectCategory();
-if(isset($_GET['add'])){
+/*if(isset($_GET['add'])){
     if (!empty($_GET['name'])&&!empty($_GET['email'])){
         $add=$question->addQwes();
         header("Location:list.php");
     }
-}
+}*/
 $admins=$question->getAdm();
 if(isset($_GET['gonewpas'])){
     $newpas=$question->newPassword();

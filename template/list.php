@@ -1,7 +1,7 @@
 <?php
 session_start();
-include ('../connect.php');
-include ('../model/baza.php');
+//include ('../connect.php');
+//include ('../model/baza.php');
  ?>
 <!DOCTYPE html>
 <html>
