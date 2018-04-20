@@ -25,7 +25,7 @@ class BazaController
     public function getlist()
     {
         $questions = $this->model->findAll();
-        echo $this->render('/list.php', ['questions'=>$questions]);
+        echo $this->render('list.php', ['questions'=>$questions]);
     }
     /*function getAdd()
     {
@@ -33,7 +33,7 @@ class BazaController
     }*/
     function getAdd()
     {
-      if(isset($_GET['add'])){
+      if(isset($_GET['addd'])){
           if (!empty($_GET['name'])&&!empty($_GET['email'])){
               $add=$this->model->addQwes();
               header("Location:list.php");

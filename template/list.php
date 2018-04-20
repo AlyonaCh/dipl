@@ -2,6 +2,7 @@
 session_start();
 //include ('../connect.php');
 //include ('../model/baza.php');
+echo $questions;
  ?>
 <!DOCTYPE html>
 <html>
@@ -27,13 +28,21 @@ session_start();
       <th>Вопрос</th>
       <th>Ответ</th>
     </tr>
-	 <?php foreach ($questions as $quest) { ?>
+	 <?php foreach ($questions as $quest) : ?>
 		<tr>
 			<td><?= $quest['catego'];?></td>
 			<td><?= $quest['quest'];?></td>
 			<td><?= $quest['answer'];?></td>
 		</tr>
-	<?php } ?>
+	<?php endforeach ?>
+  <!-- или -->
+  {% for quest in questions %}
+   <tr>
+     <td>{{quest['catego']}} </td>
+     <td>{{quest['quest']}}</td>
+     <td>{{quest['answer']}}</td>
+   </tr>
+ {% endfor %}
 </table>
   </body>
 </html>

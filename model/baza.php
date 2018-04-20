@@ -14,10 +14,11 @@ class Baza {
     {
         $sth =$this->db->prepare("SELECT * FROM question inner JOIN category  on question.id_cat=category.id where status=1  and question.answer!=''");
         if ($sth->execute()) {
-			      while($row=$sth->fetch()){
-                $resul[]=$row;
-            }
-        return $resul;
+			      //while($row=
+            return $sth->fetchAll()//){
+                //$resul[]=$row;
+            //}
+        //return $resul;
 		    }
 
     }
