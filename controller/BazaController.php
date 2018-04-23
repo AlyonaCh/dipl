@@ -9,7 +9,7 @@ class BazaController
     }
     private function render($template, $params = [])
     {
-        $fileTemplate = 'template'.$template;
+        $fileTemplate = 'template/'.$template;
         if (is_file($fileTemplate)){
             ob_start();
             if(count($params) > 0){
