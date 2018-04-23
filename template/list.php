@@ -2,7 +2,7 @@
 session_start();
 //include ('../connect.php');
 //include ('../model/baza.php');
-print_r ($questions);
+echo $questions;
  ?>
 <!DOCTYPE html>
 <html>
@@ -38,9 +38,9 @@ print_r ($questions);
   <!-- или -->
   {% for quest in questions %}
    <tr>
-     <td>{{qest}} </td>
-     <td>{{quest.quest}}</td>
-     <td>{{quest.answer}}</td>
+     <td>{{quest['catego']}} </td>
+     <td>{{quest['quest']}}</td>
+     <td>{{$quest['answer']}}</td>
    </tr>
  {% endfor %}
 </table>
