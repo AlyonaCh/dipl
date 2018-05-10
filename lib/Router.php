@@ -68,23 +68,10 @@ class Router
 }
 $router = new Router('controller/', $db);
 $router->get('/','BazaController@getList');
-$router->get('/add/','BazaController@getAdd');
-/*
-Удаляем "/?", потому что не сделали настройки на серверах
- */
-$currentUrl = str_replace('/?', '', $_SERVER['REQUEST_URI']);
-/*
-Если добавить конфиг в
-Apache
-	Options +FollowSymLinks
-	RewriteEngine On
-	RewriteRule ^(.*)$ index.php [NC,L]
-Nginx:
-	location / {
-		try_files $uri $uri/ /index.php?$query_string;
-	}
-то:
-$currentUrl = $_SERVER['REQUEST_URI'];
-*/
+$router->get('/?/adm/','BazaController@vhodAdm');
+$router->get('/?/add/','BazaController@getAdd');
+$router->post('/?/add/','BazaController@postAdd');
+$router->post('/?/adm/','BazaController@postNewadm');
+$currentUrl = str_replace('/?','', $_SERVER['REQUEST_URI']);
 $router->run($currentUrl);
 ?>

@@ -1,9 +1,4 @@
-<?php
-session_start();
-//include ('../connect.php');
-//include ('../model/baza.php');
-echo $questions;
- ?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,36 +6,30 @@ echo $questions;
     <title>Вопросы и ответы</title>
   </head>
   <body>
+    <h2>{{qu}}</h2>
     <h1>Страница вопрсов</h1>
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" action="?/adm/">
         <label>Логин</label><br>
         <input type="text" name="login" size="20"><br>
         <label>Пароль</label><br>
         <input type="password" name="pass" size="20"><br>
-        <input type="submit" name="vhod" value="Войти">
+        <input type="submit" name ="v" Value="Изменить">
+        <a href="?/adm/">Войти</a><!-- <input type="submit" name="vhod" value="Войти"> -->
     </form>
-    <form method="GET" action="add.php">
-        <input type="submit" name="addd" value="Задать вопрос">
-    </form>
+    <a href="?/add/">Создать вопрос</a>
     <table border="1">
     <tr>
       <th>Категория</th>
       <th>Вопрос</th>
       <th>Ответ</th>
     </tr>
-	 <?php foreach ($questions as $quest) : ?>
-		<tr>
-			<td><?= $quest['catego'];?></td>
-			<td><?= $quest['quest'];?></td>
-			<td><?= $quest['answer'];?></td>
-		</tr>
-	<?php endforeach ?>
+
   <!-- или -->
   {% for quest in questions %}
    <tr>
      <td>{{quest['catego']}} </td>
      <td>{{quest['quest']}}</td>
-     <td>{{$quest['answer']}}</td>
+     <td>{{quest['answer']}}</td>
    </tr>
  {% endfor %}
 </table>

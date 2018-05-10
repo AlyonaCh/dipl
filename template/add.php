@@ -1,6 +1,7 @@
 <?php
-include ('../connect.php');
-include ('../model/baza.php');
+echo $_SERVER['REQUEST_URI'];
+//include ('../connect.php');
+//include ('../lib/Router.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,10 +11,10 @@ include ('../model/baza.php');
   </head>
   <body>
     <a href="logaut.php">Выход</a>
-    <form method="GET" enctype="multipart/form-data">
+    <form method="POST" action="">
         <label>Выбирите тему</label><br>
-        <select name="catego"><?php foreach ($selec as $sel) : ?>
-          <option><?= $sel['catego'];?></option><?php endforeach ?>
+        <select name="catego">{% for sel in selec %}
+          <option>{{sel['catego']}}</option>{% endfor %}
         <select><br>
         <label>Ваш вопрос</label><br>
         <input type="text" name="qwest" size="50"><br>
