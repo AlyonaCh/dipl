@@ -13,7 +13,7 @@
         <input type="text" name="login" size="20"><br>
         <label>Пароль</label><br>
         <input type="password" name="pass" size="20"><br>
-        <input type="submit" name ="v" Value="Изменить">
+        <input type="submit" name ="v" Value="Войти">
         <a href="?/adm/">Войти</a><!-- <input type="submit" name="vhod" value="Войти"> -->
     </form>
     <a href="?/add/">Создать вопрос</a>
