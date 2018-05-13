@@ -8,7 +8,7 @@ class Baza {
     //в и о
     public function findAll()
     {
-        $sth =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question inner JOIN category  on question.id_cat=category.id where status=1  and question.answer!=''");
+        $sth =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question INNER JOIN category  ON question.id_cat=category.id WHERE status=1  AND question.answer!=''");
         if ($sth->execute()) {
 			      $resul=$sth->fetchAll();
             return $resul;
@@ -90,16 +90,17 @@ class Baza {
               $nam[]=['idcat'=>$cid,'catego'=>$cidi['catego']];
               //$nam[]=$cidi['catego'];
               //$nam_id[]=$cidi['id'];
-                    $sel1 =$this->db->prepare("select count(quest) from question where id_cat=?");
+                    $sel1 =$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=?");
                     $sel1->execute([$cid]);
                     $colq=$sel1->fetchAll();
-                    $sel2 =$this->db->prepare("select count(status) from question where id_cat=? AND status=1");
+                    $sel2 =$this->db->prepare("SELECT COUNT(status) FROM question WHERE id_cat=? AND status=1");
                     $sel2->execute([$cid]);
                     $cols=$sel2->fetchAll();
-                    $sel2 =$this->db->prepare("select count(quest) from question where id_cat=? AND answer=''");
+                    $sel2 =$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=? AND answer=''");
                     $sel2->execute([$cid]);
                     $cola=$sel2->fetchAll();
-                    $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question inner JOIN category  on question.id_cat=category.id where question.id_cat=? ");
+                    $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question
+                                               INNER JOIN category  ON question.id_cat=category.id WHERE question.id_cat=? ");
                     if ($sth2->execute([$cid])) {
             			      $qwe=$sth2->fetchAll();
                     }
@@ -113,7 +114,8 @@ class Baza {
         $catid=$this->GetCategory();
         foreach ($catid as $cidi){
             $idgw=$cidi['id'];
-            $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, users.id, users.name, users.email FROM question inner JOIN users  on question.id_user=users.id where id_cat=? ");
+            $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, users.id, users.name, users.email
+                                       FROM question INNER JOIN users  ON question.id_user=users.id WHERE id_cat=? ");
             if ($sth2->execute([$idgw])) {
 			          while($row=$sth2->fetch()){
                     if($row['status']==1){
@@ -143,7 +145,7 @@ class Baza {
     public function HideQwestion($params)
     {
         $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("update question set status=3 where id=:qid");
+        $sth2 =$this->db->prepare("UPDATE question SET status=3 WHERE id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->execute();
     }
@@ -152,7 +154,7 @@ class Baza {
     public function PublishQwestion($params)
     {
         $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("update question set status=1 where id=:qid");
+        $sth2 =$this->db->prepare("UPDATE question SET status=1 WHERE id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->execute();
     }
@@ -162,7 +164,7 @@ class Baza {
     {
         $qwidd=$params['qwid'];
         $quest=$params['newqw'];
-        $sth2 =$this->db->prepare("update question set quest=:quest where id=:qid");
+        $sth2 =$this->db->prepare("UPDATE question SET quest=:quest WHERE id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->bindParam(':quest',$quest);
         $sth2->execute();
@@ -173,7 +175,7 @@ class Baza {
     {
         $qwidd=$params['qwid'];
         $answer=$params['newansw'];
-        $sth2 =$this->db->prepare("update question set answer=:answer, status=3 where id=:qid");
+        $sth2 =$this->db->prepare("UPDATE question SET answer=:answer, status=3 WHERE id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->bindParam(':answer',$answer);
         $sth2->execute();
@@ -184,7 +186,7 @@ class Baza {
     {
         $qwidd=$params['id_user'];
         $name=$params['newavt'];
-        $sth2 =$this->db->prepare("update users set name=:name where id=:qid");
+        $sth2 =$this->db->prepare("UPDATE users SET name=:name WHERE id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->bindParam(':name',$name);
         $sth2->execute();
@@ -200,7 +202,7 @@ class Baza {
             }
         }
         $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("update question set id_cat=:id_cat where id=:id");
+        $sth2 =$this->db->prepare("UPDATE question SET id_cat=:id_cat WHERE id=:id");
         $sth2->bindParam(':id_cat',$catid);
         $sth2->bindParam(':id',$qwidd);
         $sth2->execute();
@@ -208,7 +210,7 @@ class Baza {
     //в и о
     public function FindAllAnswer()
     {
-        $sth =$this->db->prepare("SELECT id, id_cat, quest, answer, id_user, date, status FROM question  where answer='' ORDER BY date");
+        $sth =$this->db->prepare("SELECT id, id_cat, quest, answer, id_user, date, status FROM question  WHERE answer='' ORDER BY date");
         if ($sth->execute()) {
 			      $resul=$sth->fetchAll();
             if (!empty($resul)) {
@@ -228,7 +230,7 @@ class Baza {
         }
         $qwidd=$params['allid'];
         $answer=$params['newansw'];
-        $sth2 =$this->db->prepare("update question set answer=:answer, status=:status where id=:qid");
+        $sth2 =$this->db->prepare("UPDATE question SET answer=:answer, status=:status WHERE id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->bindParam(':status',$status);
         $sth2->bindParam(':answer',$answer);

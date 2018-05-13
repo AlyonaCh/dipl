@@ -40,7 +40,7 @@ class User {
     {
         $aid=$params['id'];
         $text=$params['newpas'];
-        $sth1 =$this->db->prepare("update admins set password=:password where id=:id");
+        $sth1 =$this->db->prepare("UPDATE admins SET password=:password WHERE id=:id");
         $sth1->bindParam(':password',$text);
         $sth1->bindParam(':id',$aid);
         $sth1->execute();
