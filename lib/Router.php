@@ -70,8 +70,8 @@ $router = new Router('controller/', $db);
 $router->get('/','BazaController@getList');
 $router->get('/add/','BazaController@getAdd');
 $router->post('/add/','BazaController@postAdd');
-$router->get('/adm/','AdmController@vhodAdm');
-$router->post('/adm/','AdmController@PostAdm');
+$router->get('/?/adm/','AdmController@vhodAdm');
+$router->post('/?/adm/','AdmController@PostAdm');
 $currentUrl = str_replace(['/u/achernyaeva/dip', '/?'],['', ''], $_SERVER['REQUEST_URI']);
 $router->run($currentUrl);
 ?>
