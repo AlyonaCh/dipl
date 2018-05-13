@@ -6,7 +6,7 @@
     <title>Админка</title>
   </head>
   <body>
-  <a href="logaut.php">Выход</a>
+  <a href="http://university.netology.ru/u/achernyaeva/dip/">Выход</a>
   <h2>{{aa}}</h2>
   <h2>{{qq}}</h2>
   <form method="POST">

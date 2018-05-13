@@ -1,8 +1,3 @@
-<?php
-echo $_SERVER['REQUEST_URI'];
-//include ('../connect.php');
-//include ('../lib/Router.php');
-?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,7 +5,7 @@ echo $_SERVER['REQUEST_URI'];
     <title>Добавление Вопроса</title>
   </head>
   <body>
-    <a href="logaut.php">Выход</a>
+    <a href="http://university.netology.ru/u/achernyaeva/dip/">Выход</a>
     <form method="POST" action="">
         <label>Выбирите тему</label><br>
         <select name="catego">{% for sel in selec %}

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,7 +7,7 @@
   <body>
     <h2>{{qu}}</h2>
     <h1>Страница вопрсов</h1>
-    <form method="POST" enctype="multipart/form-data" action="?/adm/">
+    <form method="POST" enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/">
         <label>Логин</label><br>
         <input type="text" name="login" size="20"><br>
         <label>Пароль</label><br>

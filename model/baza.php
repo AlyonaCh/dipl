@@ -5,37 +5,34 @@ class Baza {
     {
 		    $this->db = $db;
     }
+    //в и о
     public function findAll()
     {
-        $sth =$this->db->prepare("SELECT * FROM question inner JOIN category  on question.id_cat=category.id where status=1  and question.answer!=''");
+        $sth =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question inner JOIN category  on question.id_cat=category.id where status=1  and question.answer!=''");
         if ($sth->execute()) {
-			      while($row=$sth->fetch()){
-                $resul[]=$row;
-            }
-        return $resul;
+			      $resul=$sth->fetchAll();
+            return $resul;
 		    }
-
     }
-    public function selectCategory()
+    //Каталоги но в и о
+    public function SelectCategory()
     {
-        $sel =$this->db->prepare("SELECT * FROM category");
+        $sel =$this->db->prepare("SELECT id, catego FROM category");
         if ($sel->execute()) {
-            while($row=$sel->fetch()){
-              $resu[]=$row;
-            }
+            $resu=$sel->fetchAll();
             return $resu;
         }
     }
+    //Пользователи но в в и о
     public function getUser()
     {
-        $sel =$this->db->prepare("SELECT * FROM users");
+        $sel =$this->db->prepare("SELECT id, name, email FROM users");
         if ($sel->execute()) {
-            while($row=$sel->fetch()){
-                $us[]=$row;
-            }
+            $us=$sel->fetchAll();
             return $us;
         }
     }
+    //Пользователи но в и о
     public function newUser($params)
     {
         $tes=$this->getUser();
@@ -47,10 +44,11 @@ class Baza {
             }
         }if ($i!=1){
             $newusq =$this->db->prepare('INSERT INTO users ( name, email) VALUES ( ?, ?);');
-            $newusq->execute(array($params['name'],$params['email'])) ;
+            $newusq->execute([$params['name'],$params['email']]) ;
         }
     }
-    public function addQwes($params)
+    // в и о
+    public function AddQwestion($params)
     {
         $tes=$this->newUser($params);
         $usid=$this->getUser();
@@ -60,7 +58,7 @@ class Baza {
                 break;
             }
         }
-        $catid=$this->selectCategory();
+        $catid=$this->SelectCategory();
         foreach ($catid as $cid){
             if($params['catego']==$cid['catego']){
                 $catid=$cid['id'];
@@ -69,54 +67,12 @@ class Baza {
         }
         $sth =$this->db->prepare("INSERT INTO `question` (`id`, `id_cat`, `quest`, `id_user`, `date`, `status`)
                                   VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, '2');");
-        $sth->execute(array($catid,$params['qwest'],$id));
+        $sth->execute([$catid,$params['qwest'],$id]);
     }
-    public function getAdm()
+    //Каталоги но в и о
+    public function GetCategory()
     {
-        $sel =$this->db->prepare("SELECT * FROM admins");
-        if ($sel->execute()) {
-            while($row=$sel->fetch()){
-                $ad[]=$row;
-            }
-            return $ad;
-        }
-    }
-    //Замена пароля администратора
-    public function newPassword($params)
-    {
-        $aid=$params['id'];
-        $text=$params['newpas'];
-        $sth1 =$this->db->prepare("update admins set password=:password where id=:id");
-        $sth1->bindParam(':password',$text);
-        $sth1->bindParam(':id',$aid);
-        $sth1->execute();
-    }
-    //Удаление администратора
-    public function delAdm($params)
-    {
-        $aidd=$params['id'];
-        $sth2 =$this->db->prepare("DELETE FROM admins WHERE id =:id LIMIT 1 ");
-        $sth2->bindParam(':id',$aidd);
-        $sth2->execute();
-    }
-    //Добавление новой категории
-    public function newCategory($params)
-    {
-        $cat=$params['newcatecory'];
-        $sth =$this->db->prepare("INSERT INTO `category` (`catego`) VALUES (?);");
-        $sth->execute(array($cat));
-    }
-    //добавление нового администратора
-    public function newAdm($params)
-    {
-        $Login=$params['newadmnam'];
-        $Pas=$params['newadmpas'];
-        $sth =$this->db->prepare("INSERT INTO `admins` (`login`,`password`) VALUES (?,?);");
-        $sth->execute(array($Login,$Pas));
-    }
-    public function getCateg()
-    {
-        $sel =$this->db->prepare("SELECT * FROM category");
+        $sel =$this->db->prepare("SELECT id, catego FROM category");
         if ($sel->execute()) {
             while($row=$sel->fetch()){
                 $cat[]=['id'=>$row['id'],'catego'=>$row['catego']];
@@ -124,9 +80,10 @@ class Baza {
             return $cat;
         }
     }
-    public function getCountQwe()
+    //в и о
+    public function GetCountQwestion()
     {
-        $catid=$this->getCateg();
+        $catid=$this->GetCategory();
             foreach ($catid as $cidi){
               //print_r($cidi);
               $cid=$cidi['id'];
@@ -134,47 +91,30 @@ class Baza {
               //$nam[]=$cidi['catego'];
               //$nam_id[]=$cidi['id'];
                     $sel1 =$this->db->prepare("select count(quest) from question where id_cat=?");
-                    $sel1->execute(array($cid));
-                    while($row=$sel1->fetch()){
-                        $colq[]=$row;
-                    }
+                    $sel1->execute([$cid]);
+                    $colq=$sel1->fetchAll();
                     $sel2 =$this->db->prepare("select count(status) from question where id_cat=? AND status=1");
-                    $sel2->execute(array($cid));
-                    while($row2=$sel2->fetch()){
-                        $cols[]=$row2;
-                    }
+                    $sel2->execute([$cid]);
+                    $cols=$sel2->fetchAll();
                     $sel2 =$this->db->prepare("select count(quest) from question where id_cat=? AND answer=''");
-                    $sel2->execute(array($cid));
-                    while($row2=$sel2->fetch()){
-                        $cola[]=$row2;
+                    $sel2->execute([$cid]);
+                    $cola=$sel2->fetchAll();
+                    $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question inner JOIN category  on question.id_cat=category.id where question.id_cat=? ");
+                    if ($sth2->execute([$cid])) {
+            			      $qwe=$sth2->fetchAll();
                     }
-                    $sth2 =$this->db->prepare("SELECT * FROM question inner JOIN category  on question.id_cat=category.id where question.id_cat=? ");
-                    if ($sth2->execute(array($cid))) {
-            			      while($row=$sth2->fetch()){
-                            $qwe[]=$row;
-                        }
-
-                }
             }
-            $h=array('q'=>$colq,'s'=>$cols,'a'=>$cola,'qwe'=>$qwe,'name'=>$nam);
+            $h=['q'=>$colq,'s'=>$cols,'a'=>$cola,'qwe'=>$qwe,'name'=>$nam];
             return $h;
     }
-    //Удаление категории
-    public function delCat($params)
+    //в и о
+    public function GivQwestion()
     {
-        $aidd=$params['catid'];
-        $sth2 =$this->db->prepare("DELETE  FROM category WHERE id =:id LIMIT 1 ;
-          DELETE  FROM question WHERE id_cat =:id ");
-        $sth2->bindParam(':id',$aidd);
-        $sth2->execute();
-    }
-    public function givQwe()
-    {
-        $catid=$this->getCateg();
+        $catid=$this->GetCategory();
         foreach ($catid as $cidi){
             $idgw=$cidi['id'];
-            $sth2 =$this->db->prepare("SELECT * FROM question inner JOIN users  on question.id_user=users.id where id_cat=? ");
-            if ($sth2->execute(array($idgw))) {
+            $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, users.id, users.name, users.email FROM question inner JOIN users  on question.id_user=users.id where id_cat=? ");
+            if ($sth2->execute([$idgw])) {
 			          while($row=$sth2->fetch()){
                     if($row['status']==1){
                         $row['status']='Опубликован';
@@ -189,16 +129,18 @@ class Baza {
         }
         return $qwe;
     }
+    //в и о
     // Редактор удаление вопроса
-    public function delQwe($params)
+    public function DeletQwestion($params)
     {
         $qwidd=$params['qwid'];
         $sth2 =$this->db->prepare("DELETE  FROM question WHERE id =:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->execute();
     }
+    //в и о
     // Редактор скрыть вопрос
-    public function skQwe($params)
+    public function HideQwestion($params)
     {
         $qwidd=$params['qwid'];
         $sth2 =$this->db->prepare("update question set status=3 where id=:qid");
@@ -206,15 +148,17 @@ class Baza {
         $sth2->execute();
     }
     // Редактор опубликовать вопрос
-    public function opubQwe($params)
+    //в и о
+    public function PublishQwestion($params)
     {
         $qwidd=$params['qwid'];
         $sth2 =$this->db->prepare("update question set status=1 where id=:qid");
         $sth2->bindParam(':qid',$qwidd);
         $sth2->execute();
     }
+    //в и о
     //Редактор изменить вопрос
-    public function zamQwe($params)
+    public function ReplaceQwestion($params)
     {
         $qwidd=$params['qwid'];
         $quest=$params['newqw'];
@@ -223,8 +167,9 @@ class Baza {
         $sth2->bindParam(':quest',$quest);
         $sth2->execute();
     }
+    //в и о
     //Редактор изменить ответ или ответить
-    public function zamAnsw($params)
+    public function ReplaceAnswer($params)
     {
         $qwidd=$params['qwid'];
         $answer=$params['newansw'];
@@ -233,8 +178,9 @@ class Baza {
         $sth2->bindParam(':answer',$answer);
         $sth2->execute();
     }
+    //в и о
     //Редактор изменить автора
-    public function zamAvt($params)
+    public function ReplaceAvtorName($params)
     {
         $qwidd=$params['id_user'];
         $name=$params['newavt'];
@@ -243,22 +189,11 @@ class Baza {
         $sth2->bindParam(':name',$name);
         $sth2->execute();
     }
-    public function Vhod($params)
-    {
-        $user=$this->getAdm();
-        foreach ($user as $us){
-            if($params['login']==$us['login'] && $params['pass']==$us['password']){
-                $id=$us['id'];
-                return $id;
-            }else {
-              exit;
-            }
-        }
-    }
+    //в и о
     //Редактор переместить в другую категорию
-    public function zamCat($params)
+    public function ReplaceCategory($params)
     {
-        $catid=$this->selectCategory();
+        $catid=$this->SelectCategory();
         foreach ($catid as $cid){
             if($params['categori']==$cid['catego']){
                 $catid=$cid['id'];
@@ -270,21 +205,21 @@ class Baza {
         $sth2->bindParam(':id',$qwidd);
         $sth2->execute();
     }
-    public function findAllAns()
+    //в и о
+    public function FindAllAnswer()
     {
-        $sth =$this->db->prepare("SELECT * FROM question  where answer='' ORDER BY date");
+        $sth =$this->db->prepare("SELECT id, id_cat, quest, answer, id_user, date, status FROM question  where answer='' ORDER BY date");
         if ($sth->execute()) {
-			      while($row=$sth->fetch()){
-                $resul[]=$row;
-            }
+			      $resul=$sth->fetchAll();
             if (!empty($resul)) {
                 return $resul;
             }
 		    }
 
     }
+    //в и о
     //Ответить с выбором статуса
-    public function newAnsw($params)
+    public function NewAnswer($params)
     {
         if ($params['status']=='Скрыть') {
             $status=3;
