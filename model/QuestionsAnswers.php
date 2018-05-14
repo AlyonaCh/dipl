@@ -6,52 +6,57 @@ class QuestionsAnswers {
 		    $this->db = $db;
     }
     //в и о
+    //все опубликованные вопросы
     public function findAll()
     {
         $sth =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question INNER JOIN category  ON question.id_cat=category.id WHERE status=1  AND question.answer!=''");
         if ($sth->execute()) {
-			      $resul=$sth->fetchAll();
-            return $resul;
+			      $result=$sth->fetchAll();
+            return $result;
 		    }
     }
     //Каталоги но в и о
+    //все категории
     public function SelectCategory()
     {
-        $sel =$this->db->prepare("SELECT id, catego FROM category");
-        if ($sel->execute()) {
-            $resu=$sel->fetchAll();
-            return $resu;
+        $select =$this->db->prepare("SELECT id, catego FROM category");
+        if ($select->execute()) {
+            $result=$select->fetchAll();
+            return $result;
         }
     }
     //Пользователи но в в и о
+    //все пользователи
     public function getUser()
     {
-        $sel =$this->db->prepare("SELECT id, name, email FROM users");
-        if ($sel->execute()) {
-            $us=$sel->fetchAll();
-            return $us;
+        $getuser =$this->db->prepare("SELECT id, name, email FROM users");
+        if ($getuser->execute()) {
+            $user=$getuser->fetchAll();
+            return $user;
         }
     }
     //Пользователи но в и о
+    //Новый пользователь
     public function newUser($params)
     {
-        $tes=$this->getUser();
+        $testuser=$this->getUser();
         $i=0;
-        foreach ($tes as $test){
+        foreach ($testuser as $test){
             if($params['email']==$test['email']){
                 $i++;
                 break;
             }
         }
         if ($i!=1){
-            $newusq =$this->db->prepare('INSERT INTO users ( name, email) VALUES ( ?, ?);');
-            $newusq->execute([$params['name'],$params['email']]) ;
+            $newuser =$this->db->prepare('INSERT INTO users ( name, email) VALUES ( ?, ?);');
+            $newuser->execute([$params['name'],$params['email']]) ;
         }
     }
     // в и о
+    //Добавление вопроса
     public function AddQwestion($params)
     {
-        $tes=$this->newUser($params);
+        $newuser=$this->newUser($params);
         $usid=$this->getUser();
         foreach ($usid as $id){
             if($params['email']==$id['email']){
@@ -59,59 +64,60 @@ class QuestionsAnswers {
                 break;
             }
         }
-        $catid=$this->SelectCategory();
-        foreach ($catid as $cid){
-            if($params['catego']==$cid['catego']){
-                $catid=$cid['id'];
+        $categoryid=$this->SelectCategory();
+        foreach ($categoryid as $categoig){
+            if($params['catego']==$categoig['catego']){
+                $categoryid=$categoig['id'];
                 break;
             }
         }
         $sth =$this->db->prepare("INSERT INTO `question` (`id`, `id_cat`, `quest`, `id_user`, `date`, `status`)
                                   VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, '2');");
-        $sth->execute([$catid,$params['qwest'],$id]);
+        $sth->execute([$categoryid,$params['qwest'],$id]);
     }
     //Каталоги но в и о
     public function GetCategory()
     {
         $sel =$this->db->prepare("SELECT id, catego FROM category");
         if ($sel->execute()) {
-            while($row=$sel->fetch()){
+            while ($row=$sel->fetch()) {
                 $cat[]=['id'=>$row['id'],'catego'=>$row['catego']];
             }//print_r($cat);
             return $cat;
         }
     }
     //в и о
+    //Подсчёт количества
     public function GetCountQwestion()
     {
-        $catid=$this->GetCategory();
-        foreach ($catid as $cidi){
-            $cid=$cidi['id'];
-            $nam[]=['idcat'=>$cid,'catego'=>$cidi['catego']];
+        $categorysid=$this->GetCategory();
+        foreach ($categorysid as $categoryid){
+            $cid=$categoryid['id'];
+            $nam[]=['idcat'=>$cid,'catego'=>$categoryid['catego']];
             $sel1=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=?");
             $sel1->execute(array($cid));
-            while($row=$sel1->fetch()){
-                $colq[]=$row;
+            while ($row=$sel1->fetch()) {
+                $countQwes[]=$row;
             }
             $sel2=$this->db->prepare("SELECT COUNT(status) FROM question WHERE id_cat=? AND status=1");
             $sel2->execute(array($cid));
-            while($row2=$sel2->fetch()){
-                $cols[]=$row2;
+            while ($row2=$sel2->fetch()) {
+                $countPubQwest[]=$row2;
             }
             $sel2=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=? AND answer=''");
             $sel2->execute(array($cid));
-            while($row2=$sel2->fetch()){
-                $cola[]=$row2;
+            while ($row2=$sel2->fetch()) {
+                $countNoAnswe[]=$row2;
             }
             $sth2=$this->db->prepare("SELECT * FROM question INNER JOIN category  ON question.id_cat=category.id WHERE question.id_cat=? ");
             if ($sth2->execute(array($cid))) {
-                while($row=$sth2->fetch()){
-                    $qwe[]=$row;
+                while ($row=$sth2->fetch()) {
+                    $qwestion[]=$row;
                 }
             }
         }
-        $h=array('CountQwestion'=>$colq,'CountPublishQwestion'=>$cols,'CountNoAnswerQwestion'=>$cola,'qwe'=>$qwe,'name'=>$nam);
-        return $h;
+        $result=array('CountQwestion'=>$countQwes,'CountPublishQwestion'=>$countPubQwest,'CountNoAnswerQwestion'=>$countNoAnswe,'qwe'=>$qwestion,'name'=>$nam);
+        return $result;
     }
     //в и о
     public function GivQwestion()
@@ -122,7 +128,7 @@ class QuestionsAnswers {
             $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, users.id, users.name, users.email
                                        FROM question INNER JOIN users  ON question.id_user=users.id WHERE id_cat=? ");
             if ($sth2->execute([$idgw])) {
-			          while($row=$sth2->fetch()){
+			          while ($row=$sth2->fetch()) {
                     if($row['status']==1){
                         $row['status']='Опубликован';
                     }else if($row['status']==2){
