@@ -1,12 +1,12 @@
 
 <?php
-class BazaController
+class QuestionsAnswersController
 {
     private $model = null;
     function __construct($db)
     {
-        include 'model/baza.php';
-        $this->modelBaza = new Baza($db);
+        include 'model/QuestionsAnswers.php';
+        $this->modelQuestionsAnswers = new QuestionsAnswers($db);
         include 'model/User.php';
         $this->modelUser = new User($db);
 
@@ -26,25 +26,27 @@ class BazaController
     public function getlist()
     {
         $template = $this->getTwig('list.php');
-        $questions = $this->modelBaza->findAll();
-        echo $template->render(array('questions'=>$questions));
+        $questions = $this->modelQuestionsAnswers->findAll();
+        echo $template->render(['questions'=>$questions]);
     }
     public function getAdd()
     {
       $template = $this->getTwig('add.php');
-      $selec=$this->modelBaza->SelectCategory();
-      echo $template->render(array('selec'=>$selec));
+      $selec=$this->modelQuestionsAnswers->SelectCategory();
+      echo $template->render(['selec'=>$selec]);
     }
     public function postAdd($params,$post)
     {
       if(isset($post['add'])){
           if (isset($post['name'])&&isset($post['email'])){
-              $idAdd=$this->modelBaza->AddQwestion([
+              $idAdd=$this->modelQuestionsAnswers->AddQwestion([
                 'email'=>$post['email'],
                 'name'=>$post['name'],
                 'catego'=>$post['catego'],
                 'qwest'=>$post['qwest'],
               ]);
+            echo $back = $this->getAdd();
+            echo 'Вопрос задан';
           }
       }
     }

@@ -1,5 +1,5 @@
 <?php
-class Baza {
+class QuestionsAnswers {
     public $db = null;
     function __construct($db)
     {
@@ -42,7 +42,8 @@ class Baza {
                 $i++;
                 break;
             }
-        }if ($i!=1){
+        }
+        if ($i!=1){
             $newusq =$this->db->prepare('INSERT INTO users ( name, email) VALUES ( ?, ?);');
             $newusq->execute([$params['name'],$params['email']]) ;
         }
@@ -84,29 +85,33 @@ class Baza {
     public function GetCountQwestion()
     {
         $catid=$this->GetCategory();
-            foreach ($catid as $cidi){
-              //print_r($cidi);
-              $cid=$cidi['id'];
-              $nam[]=['idcat'=>$cid,'catego'=>$cidi['catego']];
-              //$nam[]=$cidi['catego'];
-              //$nam_id[]=$cidi['id'];
-                    $sel1 =$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=?");
-                    $sel1->execute([$cid]);
-                    $colq=$sel1->fetchAll();
-                    $sel2 =$this->db->prepare("SELECT COUNT(status) FROM question WHERE id_cat=? AND status=1");
-                    $sel2->execute([$cid]);
-                    $cols=$sel2->fetchAll();
-                    $sel2 =$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=? AND answer=''");
-                    $sel2->execute([$cid]);
-                    $cola=$sel2->fetchAll();
-                    $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, category.id, category.catego FROM question
-                                               INNER JOIN category  ON question.id_cat=category.id WHERE question.id_cat=? ");
-                    if ($sth2->execute([$cid])) {
-            			      $qwe=$sth2->fetchAll();
-                    }
+        foreach ($catid as $cidi){
+            $cid=$cidi['id'];
+            $nam[]=['idcat'=>$cid,'catego'=>$cidi['catego']];
+            $sel1=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=?");
+            $sel1->execute(array($cid));
+            while($row=$sel1->fetch()){
+                $colq[]=$row;
             }
-            $h=['q'=>$colq,'s'=>$cols,'a'=>$cola,'qwe'=>$qwe,'name'=>$nam];
-            return $h;
+            $sel2=$this->db->prepare("SELECT COUNT(status) FROM question WHERE id_cat=? AND status=1");
+            $sel2->execute(array($cid));
+            while($row2=$sel2->fetch()){
+                $cols[]=$row2;
+            }
+            $sel2=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=? AND answer=''");
+            $sel2->execute(array($cid));
+            while($row2=$sel2->fetch()){
+                $cola[]=$row2;
+            }
+            $sth2=$this->db->prepare("SELECT * FROM question INNER JOIN category  ON question.id_cat=category.id WHERE question.id_cat=? ");
+            if ($sth2->execute(array($cid))) {
+                while($row=$sth2->fetch()){
+                    $qwe[]=$row;
+                }
+            }
+        }
+        $h=array('CountQwestion'=>$colq,'CountPublishQwestion'=>$cols,'CountNoAnswerQwestion'=>$cola,'qwe'=>$qwe,'name'=>$nam);
+        return $h;
     }
     //в и о
     public function GivQwestion()

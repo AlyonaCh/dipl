@@ -6,7 +6,7 @@
   </head>
   <body>
     <a href="http://university.netology.ru/u/achernyaeva/dip/">Выход</a>
-    <form method="POST" action="">
+    <form method="POST" action="http://university.netology.ru/u/achernyaeva/dip/?/add/">
         <label>Выбирите тему</label><br>
         <select name="catego">{% for sel in selec %}
           <option>{{sel['catego']}}</option>{% endfor %}

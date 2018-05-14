@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -6,82 +5,84 @@
     <title>Админка</title>
   </head>
   <body>
-  <a href="http://university.netology.ru/u/achernyaeva/dip/">Выход</a>
-  <h2>{{aa}}</h2>
-  <h2>{{qq}}</h2>
-  <form method="POST">
+    <a href="http://university.netology.ru/u/achernyaeva/dip/">Выход</a>
+
+    <h2>Управление администраторами</h2>
+    <form method="POST" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/NewAdm/">
       <input type="text" name="newadmnam">
       <input type="text" name="newadmpas">
       <input type="submit" name="newadm" value="Добавить нового администратора">
-  </form>
-  <table border="1">
-    <tr>
-      <th>Имя</th>
-      <th>Пароль</th>
-      <th>Замена пароля</th>
-      <th>Действия</th>
-    </tr>
-    {% for admin in admins %}
-    <tr>
-      <td>{{admin['login']}}</td>
-      <td>{{admin['password']}}</td>
-      <td>
-        <form method="POST" enctype="multipart/form-data">
+    </form>
+    <br>
+    <table border="1">
+      <tr>
+        <th>Имя</th>
+        <th>Пароль</th>
+        <th>Замена пароля</th>
+        <th>Действия</th>
+      </tr>
+      {% for admin in admins %}
+      <tr>
+        <td>{{admin['login']}}</td>
+        <td>{{admin['password']}}</td>
+        <td>
+        <form method="POST" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/ChangeAdmPassword/">
           <input type="text" name="newpas">
           <input type="hidden" name="id" value="{{admin['id']}}">
-          <input type="submit" name ="gonewpas"Value="Изменить">
+          <input type="submit" name="gonewpas"Value="Изменить">
         </form>
-      </td>
-      <td>
-        <form method="POST"  enctype="multipart/form-data">
-          <input type="hidden" name="id" value="{{admin['id']}}">
-          <input type="submit" name ="godeladm" Value="Удалить">
-        </form>
+        </td>
+        <td>
+          <form method="POST"  action="http://university.netology.ru/u/achernyaeva/dip/?/adm/DeleteAdmin/">
+            <input type="hidden" name="id" value="{{admin['id']}}">
+            <input type="submit" name="godeladm" Value="Удалить">
+          </form>
      </td>
   </tr>
   {% endfor %}
   </table>
+
   <h2>Управление темами</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="text" name="newcatecory">
-        <input type="submit" name="addad" value="Добавить новую тему">
+    <form method="POST" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmNewCatecory/">
+      <input type="text" name="newcatecory">
+      <input type="submit" name="addad" value="Добавить новую тему">
     </form>
     <h3>Список тем</h3>
     <table border="1">
-     <tr>
-       <th>Название темы</th>
-       <th>Удалить категорию и все вопросы в ней</th>
-     </tr>
-     {% for categor in categorys %}
-     <tr>
-       <td>{{categor['catego']}}</td>
-       <td>
-         <form method="POST"  enctype="multipart/form-data">
+      <tr>
+        <th>Название темы</th>
+        <th>Удалить категорию и все вопросы в ней</th>
+      </tr>
+      {% for categor in categorys %}
+      <tr>
+        <td>{{categor['catego']}}</td>
+        <td>
+          <form method="POST"  action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmDeletCategory/">
             <input type="hidden" name="catid" value="{{categor['id']}}">
-            <input type="submit" name ="godelcate" Value="Удалить">
-        </form>
-      </td>
-    </tr>
+            <input type="submit" name="godelcate" Value="Удалить">
+          </form>
+        </td>
+      </tr>
      {% endfor %}
    </table>
+
    <h3>Содержание тем</h3>
-    <table border="1">
-       {% set i = 0 %}{% for qwev in qwes %}
+   <table border="1">
+   {% set i = 0 %}{% for qwev in qwestion %}
      <tr>
        <th colspan="3">Название темы</th>
        <th colspan="3">Количество вопросов</th>
        <th colspan="3">Количество опубликованных</th>
-       <th colspan="2">Количество не отвеченных</th>
+       <th colspan="3">Количество не отвеченных</th>
      </tr>
      <tr>
-       <td colspan="3">{{categco['name'][i]['catego']}}<?= $categco['name'][$i]['catego'];?></td>
-       <td colspan="3">{{categco['q'][i]['count(quest)']}}<?=$categco['q'][$i]['count(quest)']; ?></td>
-       <td colspan="3">{{categco['s'][i]['count(status)']}}<?=$categco['s'][$i]['count(status)']; ?></td>
-       <td colspan="2">{{categco['a'][i]['count(quest)']}}<?=$categco['a'][$i]['count(quest)']; $i++?>{% set i = i + 1 %}</td>
-       </td>
+       <td colspan="3">{{categco['name'][i]['catego']}}</td>
+       <td colspan="3">{{categco['CountQwestion'][i]['COUNT(quest)']}}</td>
+       <td colspan="3">{{categco['CountPublishQwestion'][i]['COUNT(status)']}}</td>
+       <td colspan="3">{{categco['CountNoAnswerQwestion'][i]['COUNT(quest)']}}{% set i = i + 1 %}</td>
      </tr>
      <tr>
-       <th colspan="11">Вопросы к теме</th>
+       <th colspan="12">Вопросы к теме</th>
      </tr>
      <tr>
        <th>Вопрос</th>
@@ -95,6 +96,7 @@
        <th>Изменить вопрос</th>
        <th>Ответить</th>
        <th>Изменить автора</th>
+       <th>Переместить в категорию</th>
      </tr>
      {% for qw in qwev %}
      <tr>
@@ -103,73 +105,95 @@
        <td>{{qw['date']}}</td>
        <td>{{qw['status']}}</td>
        <td>{{qw['name']}}</td>
-       <form method="POST"  enctype="multipart/form-data">
-             <td>
-               <input type="hidden" name="qwid" value="{{qw['0']}}">
-               <input type="submit" name ="godelqwes" Value="Удалить">
-             </td>
-             <td>
-               <input type="submit" name ="skrit" Value="Скрыть">
-             </td>
-             <td>
-               <input type="submit" name ="opub" Value="Опубликовать">
-             </td>
-             <td>
-               <input type="text" name="newqw">
-               <input type="submit" name ="zamqw" Value="Изменить">
-             </td>
-             <td>
-               <input type="text" name="newansw">
-               <input type="submit" name ="zamansw" Value="Ответить">
-             </td>
-             <td>
-               <input type="hidden" name="id_user" value="{{qw['id_user']}}">
-               <input type="text" name="newavt">
-               <input type="submit" name ="zamavt" Value="Изменить">
-             </td>
-             <td>
-               <select name="categori">{% for categor in categorys %}
-                 <option>{{categor['catego']}}</option>{% endfor %}
-               <select>
-               <input type="submit" name ="zamacat" Value="Переместить">
-             </td>
-        </form>
-     </tr>
-     {% endfor %}
+       <form method="POST" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmDeletQwestion/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <input type="submit" name="godelqwes" Value="Удалить">
+         </td>
+       </form>
+       <form method="POST"  action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmHideQwestion/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <input type="submit" name="skrit" Value="Скрыть">
+         </td>
+       </form>
+       <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmPublishQwestion/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <input type="submit" name="opub" Value="Опубликовать">
+         </td>
+       </form>
+       <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmReplaceQwestion/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <input type="text" name="newqw">
+           <input type="submit" name="zamqw" Value="Изменить">
+         </td>
+       </form>
+       <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmReplaceAnswer/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <input type="text" name="newansw">
+           <input type="submit" name="zamansw" Value="Ответить">
+         </td>
+       </form>
+       <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmReplaceAvtorName/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <input type="hidden" name="id_user" value="{{qw['id_user']}}">
+           <input type="text" name="newavt">
+           <input type="submit" name="zamavt" Value="Изменить">
+         </td>
+       </form>
+       <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmReplaceCategory/">
+         <td>
+           <input type="hidden" name="qwid" value="{{qw['0']}}">
+           <select name="categori">{% for categor in categorys %}
+             <option>{{categor['catego']}}</option>{% endfor %}
+           <select>
+           <input type="submit" name="zamacat" Value="Переместить">
+         </td>
+      </form>
+      </tr>
+      {% endfor %}
     {% endfor %}
     </table>
-      <h3>Список не отвеченных вопросов</h3>
-      <table border="1">
-       <tr>
-         <th>Вопрос</th>
-         <th>Дата добавления</th>
-         <th>Ответить</th>
-         <th>Изменить вопрос</th>
-       </tr>
-       {% for all in allans %}
-       <tr>
-         <td>{{all['quest']}}</td>
-         <td>{{all['date']}}</td>
-         <td>
-           <form method="POST"  enctype="multipart/form-data">
-               <select name="status">
-                 <option>Скрыть</option>
-                 <option>Опубликовать</option>
-               <select>
-               <input type="hidden" name="allid" value="{{all['id']}}">
-               <input type="text" name="newansw">
-               <input type="submit" name ="answ" Value="Ответить">
-          </form>
-        </td>
-        <td>
-          <form method="POST"  enctype="multipart/form-data">
-            <input type="hidden" name="qwid" value="{{all['id']}}">
-            <input type="text" name="newqw">
-            <input type="submit" name ="zamqw" Value="Изменить">
-          </form>
-        </td>
-      </tr>
+
+    <br>
+    <a href="http://university.netology.ru/u/achernyaeva/dip/?/add/">Создать вопрос</a>
+
+    <h3>Список не отвеченных вопросов</h3>
+    <table border="1">
+    <tr>
+      <th>Вопрос</th>
+      <th>Дата добавления</th>
+      <th>Ответить</th>
+      <th>Изменить вопрос</th>
+    </tr>
+    {% for all in allanswer %}
+    <tr>
+      <td>{{all['quest']}}</td>
+      <td>{{all['date']}}</td>
+      <td>
+      <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmNewAnswer/">
+        <select name="status">
+          <option>Скрыть</option>
+          <option>Опубликовать</option>
+        <select>
+        <input type="hidden" name="allid" value="{{all['id']}}">
+        <input type="text" name="newanswer">
+        <input type="submit" name="answ" Value="Ответить">
+      </form>
+      </td>
+      <td>
+        <form method="POST"  enctype="multipart/form-data" action="http://university.netology.ru/u/achernyaeva/dip/?/adm/AdmReplaceQwestion/">
+          <input type="hidden" name="qwid" value="{{all['id']}}">
+          <input type="text" name="newqw">
+          <input type="submit" name="zamqw" Value="Изменить">
+        </form>
+      </td>
+    </tr>
     {% endfor %}
-     </table>
+    </table>
   </body>
 </html>

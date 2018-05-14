@@ -11,7 +11,7 @@
         <label>Логин</label><br>
         <input type="text" name="login" size="20"><br>
         <label>Пароль</label><br>
-        <input type="password" name="pass" size="20"><br>
+        <input type="password" name="password" size="20"><br>
         <input type="submit" name ="entrance" Value="Войти">
     <a href="?/add/">Создать вопрос</a>
     <table border="1">
