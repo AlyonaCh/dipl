@@ -3,15 +3,16 @@
 class QuestionsAnswersController
 {
     private $model = null;
-    function __construct($db)
+    function __construct($db, $twig)
     {
         include 'model/QuestionsAnswers.php';
         $this->modelQuestionsAnswers = new QuestionsAnswers($db);
         include 'model/User.php';
         $this->modelUser = new User($db);
+        $this->twig = $twig;
 
     }
-    public function getTwig($tem)
+    /*public function getTwig($tem)
     {
         require_once 'vendor/autoload.php';
         Twig_Autoloader::register();
@@ -19,27 +20,27 @@ class QuestionsAnswersController
         $twig = new Twig_Environment($loader);
         $template = $twig->loadTemplate($tem);
         return $template;
-    }
+    }*/
     /**
     *Получение всех опубликованных вопросов
     */
     public function getlist()
     {
-        $template = $this->getTwig('list.php');
+        $template = $this->twig->loadTemplate('list.php') ;
         $questions = $this->modelQuestionsAnswers->findAll();
         echo $template->render(['questions'=>$questions]);
     }
     public function getAdd()
     {
-      $template = $this->getTwig('add.php');
-      $selec=$this->modelQuestionsAnswers->SelectCategory();
+      $template = $this->twig->loadTemplate('add.php') ;
+      $selec=$this->modelQuestionsAnswers->selectCategory();
       echo $template->render(['selec'=>$selec]);
     }
-    public function postAdd($params,$post)
+    public function postAdd($params, $post)
     {
       if(isset($post['add'])){
           if (isset($post['name'])&&isset($post['email'])){
-              $idAdd=$this->modelQuestionsAnswers->AddQwestion([
+              $idAdd=$this->modelQuestionsAnswers->addQwestion([
                 'email'=>$post['email'],
                 'name'=>$post['name'],
                 'catego'=>$post['catego'],
@@ -50,9 +51,9 @@ class QuestionsAnswersController
           }
       }
     }
-    public function Vhod()
+    public function vhod()
     {
-        $user=$this->modelUser->GetAdm();
+        $user=$this->modelUser->getAdmin();
         $_SESSION['userid']=NULL;
         foreach ($user as $us){
             if($_POST['login']==$us['login'] && $_POST['pass']==$us['password']){

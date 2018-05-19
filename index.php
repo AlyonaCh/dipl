@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
 ini_set('display_errors', 1);
 $config = include 'config.php';
@@ -13,6 +13,10 @@ $db = DataBase::connect(
 	$config['mysql']['user'],
 	$config['mysql']['pass']
 );
+require_once 'vendor/autoload.php';
+Twig_Autoloader::register();
+$loader = new Twig_Loader_Filesystem('template');
+$twig = new Twig_Environment($loader);
 
 include 'lib/Router.php';
 ?>

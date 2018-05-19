@@ -6,20 +6,18 @@ class Catalogi {
 		    $this->db = $db;
     }
     //Добавление новой категории
-    public function NewCategory($params)
+    public function newCategory($category)
     {
-        $cat=$params['newcatecory'];
         $sth =$this->db->prepare("INSERT INTO `category` (`catego`) VALUES (?);");
-        $sth->execute([$cat]);
+        $sth->execute([$category]);
     }
     //Удаление категории
-    public function DeletCategory($params)
+    public function deletCategory($id)
     {
-        $aidd=$params['catid'];
-        $sth2 =$this->db->prepare("DELETE  FROM category WHERE id =:id LIMIT 1 ;
+        $sth =$this->db->prepare("DELETE  FROM category WHERE id =:id LIMIT 1 ;
           DELETE  FROM question WHERE id_cat =:id ");
-        $sth2->bindParam(':id',$aidd);
-        $sth2->execute();
+        $sth->bindParam(':id', $id);
+        $sth->execute();
     }
 }
 ?>

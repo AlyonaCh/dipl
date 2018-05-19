@@ -6,51 +6,48 @@ class User {
 		    $this->db = $db;
     }
     //Все администраторы
-    public function GetAdm()
+    public function getAdmin()
     {
         $sel =$this->db->prepare("SELECT id, login, password FROM admins");
         if ($sel->execute()) {
-            $ad=$sel->fetchAll();
-            return $ad;
+            $admin=$sel->fetchAll();
+            return $admin;
         }
     }
     //Вход !!!!
-    public function Vhod($params)
-    {
-        $user=$this->GetAdm();
-        foreach ($user as $us){
-            if($params['login']==$us['login'] && $params['pass']==$us['password']){
-                $id=$us['id'];
-                return $id;
-            }else {
-              exit;
-            }
-        }
+    public function authorization($login, $password )
+{
+    $sth =$this->db->prepare("SELECT id FROM admins WHERE login=:login AND password=:password");
+    $sth->bindParam(':password', $password);
+    $sth->bindParam(':login', $login);
+    $sth->execute();
+    $userId = $sth->fetch(PDO::FETCH_ASSOC);
+    $result = false;
+    if ($userId) {
+        $_SESSION['userId'] = $userId;
+        $result = true;
     }
+    return $result;
+}
     //добавление нового администратора
-    public function NewAdm($params)
+    public function newAdmin($login, $password)
     {
-        $Login=$params['newadmnam'];
-        $Pas=$params['newadmpas'];
         $sth =$this->db->prepare("INSERT INTO `admins` (`login`,`password`) VALUES (?,?);");
-        $sth->execute([$Login,$Pas]);
+        $sth->execute([$login,$password]);
     }
     //Замена пароля администратора
-    public function NewPassword($params)
+    public function newPassword($id, $password)
     {
-        $aid=$params['id'];
-        $text=$params['newpas'];
         $sth1 =$this->db->prepare("UPDATE admins SET password=:password WHERE id=:id");
-        $sth1->bindParam(':password',$text);
-        $sth1->bindParam(':id',$aid);
+        $sth1->bindParam(':password', $password);
+        $sth1->bindParam(':id', $id);
         $sth1->execute();
     }
     //Удаление администратора
-    public function DeletAdm($params)
+    public function deletAdmin($id)
     {
-        $aidd=$params['id'];
         $sth2 =$this->db->prepare("DELETE FROM admins WHERE id =:id LIMIT 1 ");
-        $sth2->bindParam(':id',$aidd);
+        $sth2->bindParam(':id', $id);
         $sth2->execute();
     }
 }

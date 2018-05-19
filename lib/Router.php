@@ -3,11 +3,13 @@ class Router
 {
 	private $dirConroller = '';
 	private $db = '';
+	private $twig = '';
 	private $urls = [];
-	function __construct($dirConroller, $db)
+	function __construct($dirConroller, $db, $twig)
 	{
 		$this->dirConroller = $dirConroller;
 		$this->db = $db;
+		$this->twig = $twig;
 	}
 	/**
 	 * Добавление роутеров
@@ -55,7 +57,7 @@ class Router
 						$params[$param] = $matchList[$i];
 					}
 					include $this->dirConroller.$urlData['controller'].'.php';
-					$controller = new $urlData['controller']($this->db);
+					$controller = new $urlData['controller']($this->db, $this->twig);
 					if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						$controller->$urlData['action']($params, $_POST);
 					} else {
@@ -66,24 +68,24 @@ class Router
 		}
 	}
 }
-$router = new Router('controller/', $db);
+$router = new Router('controller/', $db, $twig);
 $router->get('/','QuestionsAnswersController@getList');
 $router->get('/add/','QuestionsAnswersController@getAdd');
 $router->post('/add/','QuestionsAnswersController@postAdd');
-$router->post('/adm/','AdmController@vhodAdm');
-$router->post('/adm/NewAdm/','AdmController@NewAdm');
-$router->post('/adm/ChangeAdmPassword/','AdmController@ChangeAdmPassword');
-$router->post('/adm/DeleteAdmin/','AdmController@DeleteAdmin');
-$router->post('/adm/AdmNewCatecory/','AdmController@AdmNewCatecory');
-$router->post('/adm/AdmDeletCategory/','AdmController@AdmDeletCategory');
-$router->post('/adm/AdmDeletQwestion/','AdmController@AdmDeletQwestion');
-$router->post('/adm/AdmHideQwestion/','AdmController@AdmHideQwestion');
-$router->post('/adm/AdmPublishQwestion/','AdmController@AdmPublishQwestion');
-$router->post('/adm/AdmReplaceQwestion/','AdmController@AdmReplaceQwestion');
-$router->post('/adm/AdmReplaceAnswer/','AdmController@AdmReplaceAnswer');
-$router->post('/adm/AdmReplaceAvtorName/','AdmController@AdmReplaceAvtorName');
-$router->post('/adm/AdmReplaceCategory/','AdmController@AdmReplaceCategory');
-$router->post('/adm/AdmNewAnswer/','AdmController@AdmNewAnswer');
+$router->post('/adm/','AdminController@vhodAdmin');
+$router->post('/adm/New-Admin/','AdminController@newAdmin');
+$router->post('/adm/Change-Admin-Password/','AdminController@changeAdminPassword');
+$router->post('/adm/Delete-Admin/','AdminController@deleteAdmin');
+$router->post('/adm/Admin-New-Catecory/','AdminController@adminNewCatecory');
+$router->post('/adm/Admin-Delet-Category/','AdminController@adminDeletCategory');
+$router->post('/adm/Admin-Delet-Qwestion/','AdminController@adminDeletQwestion');
+$router->post('/adm/Admin-Hide-Qwestion/','AdminController@adminHideQwestion');
+$router->post('/adm/Admin-Publish-Qwestion/','AdminController@adminPublishQwestion');
+$router->post('/adm/Admin-Replace-Qwestion/','AdminController@adminReplaceQwestion');
+$router->post('/adm/Admin-Replace-Answer/','AdminController@adminReplaceAnswer');
+$router->post('/adm/Admin-Replace-Avtor-Name/','AdminController@adminReplaceAvtorName');
+$router->post('/adm/Admin-Replace-Category/','AdminController@adminReplaceCategory');
+$router->post('/adm/Admin-New-Answer/','AdminController@adminNewAnswer');
 $currentUrl = str_replace(['/u/achernyaeva/dip', '/?'],['', ''], $_SERVER['REQUEST_URI']);
 $router->run($currentUrl);
 ?>

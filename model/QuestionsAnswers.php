@@ -17,11 +17,11 @@ class QuestionsAnswers {
     }
     //Каталоги но в и о
     //все категории
-    public function SelectCategory()
+    public function selectCategory()
     {
-        $select =$this->db->prepare("SELECT id, catego FROM category");
-        if ($select->execute()) {
-            $result=$select->fetchAll();
+        $sth =$this->db->prepare("SELECT id, catego FROM category");
+        if ($sth->execute()) {
+            $result=$sth->fetchAll();
             return $result;
         }
     }
@@ -29,9 +29,9 @@ class QuestionsAnswers {
     //все пользователи
     public function getUser()
     {
-        $getuser =$this->db->prepare("SELECT id, name, email FROM users");
-        if ($getuser->execute()) {
-            $user=$getuser->fetchAll();
+        $sth =$this->db->prepare("SELECT id, name, email FROM users");
+        if ($sth->execute()) {
+            $user=$sth->fetchAll();
             return $user;
         }
     }
@@ -39,32 +39,31 @@ class QuestionsAnswers {
     //Новый пользователь
     public function newUser($params)
     {
-        $testuser=$this->getUser();
-        $i=0;
-        foreach ($testuser as $test){
-            if($params['email']==$test['email']){
-                $i++;
-                break;
-            }
-        }
-        if ($i!=1){
+        $sth =$this->db->prepare("SELECT id FROM users WHERE name=:name email=:email");
+        $sth->bindParam(':email', $params['email']);
+        $sth->bindParam(':name', $params['name']);
+        $sth->execute();
+        $userId = $sth->fetch(PDO::FETCH_ASSOC);
+        if ($userId) {
+            //пользователь уже есть
+        }else{
             $newuser =$this->db->prepare('INSERT INTO users ( name, email) VALUES ( ?, ?);');
-            $newuser->execute([$params['name'],$params['email']]) ;
+            $newuser->execute([$params['name'], $params['email']]) ;
         }
     }
     // в и о
     //Добавление вопроса
-    public function AddQwestion($params)
+    public function addQwestion($params)
     {
         $newuser=$this->newUser($params);
-        $usid=$this->getUser();
-        foreach ($usid as $id){
+        $userid=$this->getUser();
+        foreach ($userid as $id){
             if($params['email']==$id['email']){
                 $id=$id['id'];
                 break;
             }
         }
-        $categoryid=$this->SelectCategory();
+        $categoryid=$this->selectCategory();
         foreach ($categoryid as $categoig){
             if($params['catego']==$categoig['catego']){
                 $categoryid=$categoig['id'];
@@ -73,45 +72,45 @@ class QuestionsAnswers {
         }
         $sth =$this->db->prepare("INSERT INTO `question` (`id`, `id_cat`, `quest`, `id_user`, `date`, `status`)
                                   VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, '2');");
-        $sth->execute([$categoryid,$params['qwest'],$id]);
+        $sth->execute([$categoryid, $params['qwest'], $id]);
     }
     //Каталоги но в и о
-    public function GetCategory()
+    public function getCategory()
     {
-        $sel =$this->db->prepare("SELECT id, catego FROM category");
-        if ($sel->execute()) {
-            while ($row=$sel->fetch()) {
-                $cat[]=['id'=>$row['id'],'catego'=>$row['catego']];
+        $sth =$this->db->prepare("SELECT id, catego FROM category");
+        if ($sth->execute()) {
+            while ($catategory=$sth->fetch()) {
+                $catategorys[]=['id'=>$catategory['id'], 'catego'=>$catategory['catego']];
             }//print_r($cat);
-            return $cat;
+            return $catategorys;
         }
     }
     //в и о
     //Подсчёт количества
-    public function GetCountQwestion()
+    public function getCountQwestion()
     {
-        $categorysid=$this->GetCategory();
+        $categorysid=$this->getCategory();
         foreach ($categorysid as $categoryid){
-            $cid=$categoryid['id'];
-            $nam[]=['idcat'=>$cid,'catego'=>$categoryid['catego']];
-            $sel1=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=?");
-            $sel1->execute(array($cid));
-            while ($row=$sel1->fetch()) {
+            $categorid=$categoryid['id'];
+            $nam[]=['idcat'=>$categorid, 'catego'=>$categoryid['catego']];
+            $sth1=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=?");
+            $sth1->execute(array($categorid));
+            while ($row=$sth1->fetch()) {
                 $countQwes[]=$row;
             }
-            $sel2=$this->db->prepare("SELECT COUNT(status) FROM question WHERE id_cat=? AND status=1");
-            $sel2->execute(array($cid));
-            while ($row2=$sel2->fetch()) {
+            $sth2=$this->db->prepare("SELECT COUNT(status) FROM question WHERE id_cat=? AND status=1");
+            $sth2->execute(array($categorid));
+            while ($row2=$sth2->fetch()) {
                 $countPubQwest[]=$row2;
             }
-            $sel2=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=? AND answer=''");
-            $sel2->execute(array($cid));
-            while ($row2=$sel2->fetch()) {
+            $sth2=$this->db->prepare("SELECT COUNT(quest) FROM question WHERE id_cat=? AND answer=''");
+            $sth2->execute(array($categorid));
+            while ($row2=$sth2->fetch()) {
                 $countNoAnswe[]=$row2;
             }
-            $sth2=$this->db->prepare("SELECT * FROM question INNER JOIN category  ON question.id_cat=category.id WHERE question.id_cat=? ");
-            if ($sth2->execute(array($cid))) {
-                while ($row=$sth2->fetch()) {
+            $sth3=$this->db->prepare("SELECT * FROM question INNER JOIN category  ON question.id_cat=category.id WHERE question.id_cat=? ");
+            if ($sth3->execute(array($categorid))) {
+                while ($row=$sth3->fetch()) {
                     $qwestion[]=$row;
                 }
             }
@@ -120,15 +119,15 @@ class QuestionsAnswers {
         return $result;
     }
     //в и о
-    public function GivQwestion()
+    public function givQwestion()
     {
-        $catid=$this->GetCategory();
-        foreach ($catid as $cidi){
-            $idgw=$cidi['id'];
-            $sth2 =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, users.id, users.name, users.email
+        $categorys=$this->getCategory();
+        foreach ($categorys as $category){
+            $idategory=$category['id'];
+            $sth =$this->db->prepare("SELECT question.id, id_cat, quest, answer, id_user, date, status, users.id, users.name, users.email
                                        FROM question INNER JOIN users  ON question.id_user=users.id WHERE id_cat=? ");
-            if ($sth2->execute([$idgw])) {
-			          while ($row=$sth2->fetch()) {
+            if ($sth->execute([$idategory])) {
+			          while ($row=$sth->fetch()) {
                     if($row['status']==1){
                         $row['status']='Опубликован';
                     }else if($row['status']==2){
@@ -136,90 +135,80 @@ class QuestionsAnswers {
                     }else{
                         $row['status']='Скрыт';
                     }
-                    $qwe[$cidi['catego']][]=$row;
+                    $qwestion[$category['catego']][]=$row;
                 }
             }
         }
-        return $qwe;
+        return $qwestion;
     }
     //в и о
     // Редактор удаление вопроса
-    public function DeletQwestion($params)
+    public function deletQwestion($id)
     {
-        $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("DELETE  FROM question WHERE id =:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->execute();
+        $sth =$this->db->prepare("DELETE  FROM question WHERE id =:qid");
+        $sth->bindParam(':qid', $id);
+        $sth->execute();
     }
     //в и о
     // Редактор скрыть вопрос
-    public function HideQwestion($params)
+    public function hideQwestion($id)
     {
-        $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("UPDATE question SET status=3 WHERE id=:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE question SET status=3 WHERE id=:qid");
+        $sth->bindParam(':qid', $id);
+        $sth->execute();
     }
     // Редактор опубликовать вопрос
     //в и о
-    public function PublishQwestion($params)
+    public function publishQwestion($id)
     {
-        $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("UPDATE question SET status=1 WHERE id=:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE question SET status=1 WHERE id=:qid");
+        $sth->bindParam(':qid', $id);
+        $sth->execute();
     }
     //в и о
     //Редактор изменить вопрос
-    public function ReplaceQwestion($params)
+    public function replaceQwestion($id, $qwestion)
     {
-        $qwidd=$params['qwid'];
-        $quest=$params['newqw'];
-        $sth2 =$this->db->prepare("UPDATE question SET quest=:quest WHERE id=:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->bindParam(':quest',$quest);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE question SET quest=:quest WHERE id=:qid");
+        $sth->bindParam(':qid', $id);
+        $sth->bindParam(':quest', $qwestion);
+        $sth->execute();
     }
     //в и о
     //Редактор изменить ответ или ответить
-    public function ReplaceAnswer($params)
+    public function replaceAnswer($id, $answer)
     {
-        $qwidd=$params['qwid'];
-        $answer=$params['newansw'];
-        $sth2 =$this->db->prepare("UPDATE question SET answer=:answer, status=3 WHERE id=:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->bindParam(':answer',$answer);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE question SET answer=:answer, status=3 WHERE id=:qid");
+        $sth->bindParam(':qid', $id);
+        $sth->bindParam(':answer', $answer);
+        $sth->execute();
     }
     //в и о
     //Редактор изменить автора
-    public function ReplaceAvtorName($params)
+    public function replaceAvtorName($id, $avtor)
     {
-        $qwidd=$params['id_user'];
-        $name=$params['newavt'];
-        $sth2 =$this->db->prepare("UPDATE users SET name=:name WHERE id=:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->bindParam(':name',$name);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE users SET name=:name WHERE id=:qid");
+        $sth->bindParam(':qid', $id);
+        $sth->bindParam(':name', $avtor);
+        $sth->execute();
     }
     //в и о
     //Редактор переместить в другую категорию
-    public function ReplaceCategory($params)
+    public function replaceCategory($category, $id)
     {
-        $catid=$this->SelectCategory();
-        foreach ($catid as $cid){
-            if($params['categori']==$cid['catego']){
-                $catid=$cid['id'];
+        $categorys=$this->selectCategory();
+        foreach ($categorys as $categoryid){
+            if($category==$categoryid['catego']){
+                $newcategoryid=$categoryid['id'];
             }
         }
-        $qwidd=$params['qwid'];
-        $sth2 =$this->db->prepare("UPDATE question SET id_cat=:id_cat WHERE id=:id");
-        $sth2->bindParam(':id_cat',$catid);
-        $sth2->bindParam(':id',$qwidd);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE question SET id_cat=:id_cat WHERE id=:id");
+        $sth->bindParam(':id_cat', $newcategoryid);
+        $sth->bindParam(':id', $id);
+        $sth->execute();
     }
     //в и о
-    public function FindAllAnswer()
+    public function findAllAnswer()
     {
         $sth =$this->db->prepare("SELECT id, id_cat, quest, answer, id_user, date, status FROM question  WHERE answer='' ORDER BY date");
         if ($sth->execute()) {
@@ -232,20 +221,18 @@ class QuestionsAnswers {
     }
     //в и о
     //Ответить с выбором статуса
-    public function NewAnswer($params)
+    public function newAnswer($answer, $qwestionid, $status)
     {
-        if ($params['status']=='Скрыть') {
-            $status=3;
+        if ($status=='Скрыть') {
+            $statusid=3;
         }else{
-            $status=1;
+            $statusid=1;
         }
-        $qwidd=$params['allid'];
-        $answer=$params['newansw'];
-        $sth2 =$this->db->prepare("UPDATE question SET answer=:answer, status=:status WHERE id=:qid");
-        $sth2->bindParam(':qid',$qwidd);
-        $sth2->bindParam(':status',$status);
-        $sth2->bindParam(':answer',$answer);
-        $sth2->execute();
+        $sth =$this->db->prepare("UPDATE question SET answer=:answer, status=:status WHERE id=:qid");
+        $sth->bindParam(':qid', $qwestionid);
+        $sth->bindParam(':status', $statusid);
+        $sth->bindParam(':answer', $answer);
+        $sth->execute();
     }
 }
 ?>
