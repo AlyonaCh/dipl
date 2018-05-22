@@ -13,6 +13,7 @@
         <label>Пароль</label><br>
         <input type="password" name="password" size="20"><br>
         <input type="submit" name ="entrance" Value="Войти">
+    </form>
     <a href="?/add/">Создать вопрос</a>
     <table border="1">
     <tr>

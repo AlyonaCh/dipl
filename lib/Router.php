@@ -3,13 +3,13 @@ class Router
 {
 	private $dirConroller = '';
 	private $db = '';
-	private $twig = '';
+	private $twig  = '';
 	private $urls = [];
-	function __construct($dirConroller, $db, $twig)
+	function __construct($dirConroller, $db, $twig )
 	{
 		$this->dirConroller = $dirConroller;
 		$this->db = $db;
-		$this->twig = $twig;
+		$this->twig = $twig ;
 	}
 	/**
 	 * Добавление роутеров
@@ -68,7 +68,7 @@ class Router
 		}
 	}
 }
-$router = new Router('controller/', $db, $twig);
+$router = new Router('controller/', $db, $twig );
 $router->get('/','QuestionsAnswersController@getList');
 $router->get('/add/','QuestionsAnswersController@getAdd');
 $router->post('/add/','QuestionsAnswersController@postAdd');

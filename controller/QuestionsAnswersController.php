@@ -3,24 +3,16 @@
 class QuestionsAnswersController
 {
     private $model = null;
-    function __construct($db, $twig)
+    private $twig = null;
+    function __construct($db, $twig )
     {
         include 'model/QuestionsAnswers.php';
         $this->modelQuestionsAnswers = new QuestionsAnswers($db);
         include 'model/User.php';
         $this->modelUser = new User($db);
-        $this->twig = $twig;
+        $this->twig = $twig ;
 
     }
-    /*public function getTwig($tem)
-    {
-        require_once 'vendor/autoload.php';
-        Twig_Autoloader::register();
-        $loader = new Twig_Loader_Filesystem('template');
-        $twig = new Twig_Environment($loader);
-        $template = $twig->loadTemplate($tem);
-        return $template;
-    }*/
     /**
     *Получение всех опубликованных вопросов
     */

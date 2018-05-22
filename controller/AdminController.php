@@ -2,6 +2,7 @@
 class AdminController
 {
     private $model = null;
+    private $twig = null;
     function __construct($db, $twig)
     {
         include 'model/QuestionsAnswers.php';
@@ -10,6 +11,7 @@ class AdminController
         $this->modelUser = new User($db);
         include 'model/Catalogi.php';
         $this->modelCatalogi = new Catalogi($db);
+        $this->twig = $twig;
 
     }
     //предеача данных в adm
@@ -25,9 +27,9 @@ class AdminController
         $template = $this->twig->loadTemplate('adm.php') ;
         $admins = $this->modelUser->getAdmin();
         $categorys = $this->modelQuestionsAnswers->selectCategory();
-        $qwestions=$this->modelQuestionsAnswers->givQwestion();
-        $categco=$this->modelQuestionsAnswers->getCountQwestion();
-        $allanswer=$this->modelQuestionsAnswers->findAllAnswer();
+        $qwestions = $this->modelQuestionsAnswers->givQwestion();
+        $categco = $this->modelQuestionsAnswers->getCountQwestion();
+        $allanswer = $this->modelQuestionsAnswers->findAllAnswer();
         echo $template->render(['admins'=>$admins,'categorys'=>$categorys,
         'qwestions'=>$qwestions,'categco'=>$categco,'allanswer'=>$allanswer,'session'=>$_SESSION['userid']]);
     }
