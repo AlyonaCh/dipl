@@ -18,15 +18,13 @@ class QuestionsAnswersController
     */
     public function getlist()
     {
-        $template = $this->twig->loadTemplate('list.php') ;
         $questions = $this->modelQuestionsAnswers->findAll();
-        echo $template->render(['questions'=>$questions]);
+        echo $this->twig->render('list.php',['questions'=>$questions]);
     }
     public function getAdd()
     {
-      $template = $this->twig->loadTemplate('add.php') ;
       $selec=$this->modelQuestionsAnswers->selectCategory();
-      echo $template->render(['selec'=>$selec]);
+      echo $this->twig->render('add.php',['selec'=>$selec]);
     }
     public function postAdd($params, $post)
     {

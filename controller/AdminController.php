@@ -24,24 +24,14 @@ class AdminController
         }else{
             header("Location:http://university.netology.ru/u/achernyaeva/dip/");
         }
-        $template = $this->twig->loadTemplate('adm.php') ;
         $admins = $this->modelUser->getAdmin();
         $categorys = $this->modelQuestionsAnswers->selectCategory();
         $qwestions = $this->modelQuestionsAnswers->givQwestion();
         $categco = $this->modelQuestionsAnswers->getCountQwestion();
         $allanswer = $this->modelQuestionsAnswers->findAllAnswer();
-        echo $template->render(['admins'=>$admins,'categorys'=>$categorys,
+        echo $this->twig->render('adm.php',['admins'=>$admins,'categorys'=>$categorys,
         'qwestions'=>$qwestions,'categco'=>$categco,'allanswer'=>$allanswer,'session'=>$_SESSION['userid']]);
     }
-    /*public function getTwig($tem)
-    {
-        require_once 'vendor/autoload.php';
-        Twig_Autoloader::register();
-        $loader = new Twig_Loader_Filesystem('template');
-        $twig = new Twig_Environment($loader);
-        $template = $twig->loadTemplate($tem);
-        return $template;
-    }*/
     //Добавление нового администратора
     public function newAdmin($params,$post)
     {
